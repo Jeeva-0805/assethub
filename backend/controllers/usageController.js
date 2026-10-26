@@ -1,5 +1,6 @@
 const mongoose = require("mongoose")
 const Usage = require("../models/Usage")
+const Asset = require("../models/Asset")
 
 // GET all usage records
 const getUsage = async (req, res) => {
@@ -38,7 +39,28 @@ const getUsageRecord = async (req, res) => {
 // POST create usage record
 const createUsageRecord = async (req, res) => {
   try {
-    const { asset, user, purpose, startDate, endDate, status } = req.body
+    let { asset, assetId, user, purpose, startDate, endDate, status } = req.body
+
+    // Resolve asset name if assetId was provided or if asset is an ObjectId
+    if (!asset && assetId) {
+      if (mongoose.Types.ObjectId.isValid(assetId)) {
+        const found = await Asset.findById(assetId)
+        if (found) {
+          asset = found.name
+        }
+      }
+    } else if (asset && mongoose.Types.ObjectId.isValid(asset)) {
+      const found = await Asset.findById(asset)
+      if (found) {
+        assetId = asset
+        asset = found.name
+      }
+    } else if (asset && !assetId) {
+      const found = await Asset.findOne({ name: asset.trim() })
+      if (found) {
+        assetId = found._id
+      }
+    }
 
     const errors = []
     if (!asset || !asset.trim()) errors.push("Asset name is required")
@@ -69,6 +91,7 @@ const createUsageRecord = async (req, res) => {
 
     const newRecord = await Usage.create({
       asset: asset.trim(),
+      assetId: assetId || undefined,
       user: user.trim(),
       purpose: purpose.trim(),
       startDate,
@@ -97,10 +120,31 @@ const updateUsageRecord = async (req, res) => {
       return res.status(404).json({ message: "Usage record not found" })
     }
 
-    const { asset, user, purpose, startDate, endDate, status } = req.body
+    let { asset, assetId, user, purpose, startDate, endDate, status } = req.body
     const updateData = {}
 
+    if (!asset && assetId) {
+      if (mongoose.Types.ObjectId.isValid(assetId)) {
+        const found = await Asset.findById(assetId)
+        if (found) {
+          asset = found.name
+        }
+      }
+    } else if (asset && mongoose.Types.ObjectId.isValid(asset)) {
+      const found = await Asset.findById(asset)
+      if (found) {
+        assetId = asset
+        asset = found.name
+      }
+    } else if (asset && !assetId) {
+      const found = await Asset.findOne({ name: asset.trim() })
+      if (found) {
+        assetId = found._id
+      }
+    }
+
     if (asset !== undefined) updateData.asset = asset.trim()
+    if (assetId !== undefined) updateData.assetId = assetId
     if (user !== undefined) updateData.user = user.trim()
     if (purpose !== undefined) updateData.purpose = purpose.trim()
     if (startDate !== undefined) updateData.startDate = startDate

@@ -99,6 +99,7 @@ function Usage() {
       const targetId = updatedUsage._id || updatedUsage.id
       const saved = await updateUsage(targetId, {
         asset: updatedUsage.asset,
+        assetId: updatedUsage.assetId,
         user: updatedUsage.user,
         purpose: updatedUsage.purpose,
         startDate: updatedUsage.startDate,

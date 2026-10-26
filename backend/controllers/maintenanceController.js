@@ -1,5 +1,6 @@
 const mongoose = require("mongoose")
 const Maintenance = require("../models/Maintenance")
+const Asset = require("../models/Asset")
 
 // GET all maintenance records
 const getMaintenance = async (req, res) => {
@@ -38,7 +39,28 @@ const getMaintenanceRecord = async (req, res) => {
 // POST create maintenance record
 const createMaintenanceRecord = async (req, res) => {
   try {
-    const { asset, type, date, technician, cost, status } = req.body
+    let { asset, assetId, type, date, technician, cost, status } = req.body
+
+    // Resolve asset name if assetId was provided or if asset is an ObjectId
+    if (!asset && assetId) {
+      if (mongoose.Types.ObjectId.isValid(assetId)) {
+        const found = await Asset.findById(assetId)
+        if (found) {
+          asset = found.name
+        }
+      }
+    } else if (asset && mongoose.Types.ObjectId.isValid(asset)) {
+      const found = await Asset.findById(asset)
+      if (found) {
+        assetId = asset
+        asset = found.name
+      }
+    } else if (asset && !assetId) {
+      const found = await Asset.findOne({ name: asset.trim() })
+      if (found) {
+        assetId = found._id
+      }
+    }
 
     const errors = []
     if (!asset || !asset.trim()) errors.push("Asset name is required")
@@ -65,6 +87,7 @@ const createMaintenanceRecord = async (req, res) => {
 
     const newRecord = await Maintenance.create({
       asset: asset.trim(),
+      assetId: assetId || undefined,
       type: type.trim(),
       date,
       technician: technician.trim(),
@@ -88,10 +111,31 @@ const updateMaintenanceRecord = async (req, res) => {
       return res.status(400).json({ message: "Invalid maintenance record ID format" })
     }
 
-    const { asset, type, date, technician, cost, status } = req.body
+    let { asset, assetId, type, date, technician, cost, status } = req.body
     const updateData = {}
 
+    if (!asset && assetId) {
+      if (mongoose.Types.ObjectId.isValid(assetId)) {
+        const found = await Asset.findById(assetId)
+        if (found) {
+          asset = found.name
+        }
+      }
+    } else if (asset && mongoose.Types.ObjectId.isValid(asset)) {
+      const found = await Asset.findById(asset)
+      if (found) {
+        assetId = asset
+        asset = found.name
+      }
+    } else if (asset && !assetId) {
+      const found = await Asset.findOne({ name: asset.trim() })
+      if (found) {
+        assetId = found._id
+      }
+    }
+
     if (asset !== undefined) updateData.asset = asset.trim()
+    if (assetId !== undefined) updateData.assetId = assetId
     if (type !== undefined) updateData.type = type.trim()
     if (date !== undefined) updateData.date = date
     if (technician !== undefined) updateData.technician = technician.trim()

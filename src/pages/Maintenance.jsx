@@ -94,6 +94,7 @@ function Maintenance() {
       const targetId = updatedRecord._id || updatedRecord.id
       const saved = await updateMaintenance(targetId, {
         asset: updatedRecord.asset,
+        assetId: updatedRecord.assetId,
         type: updatedRecord.type,
         date: updatedRecord.date,
         technician: updatedRecord.technician,

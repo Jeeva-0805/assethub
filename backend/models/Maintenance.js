@@ -7,6 +7,10 @@ const maintenanceSchema = new mongoose.Schema(
       required: [true, "Asset name is required"],
       trim: true
     },
+    assetId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Asset"
+    },
     type: {
       type: String,
       required: [true, "Maintenance type is required"],

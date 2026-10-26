@@ -7,6 +7,10 @@ const usageSchema = new mongoose.Schema(
       required: [true, "Asset name is required"],
       trim: true
     },
+    assetId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Asset"
+    },
     user: {
       type: String,
       required: [true, "User name is required"],
