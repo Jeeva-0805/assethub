@@ -5,7 +5,10 @@ const connectDB = async () => {
     if (!process.env.MONGO_URI) {
       throw new Error("MONGO_URI is not defined in environment variables.")
     }
-    const conn = await mongoose.connect(process.env.MONGO_URI)
+    const dbName = process.env.DB_NAME || "assethub"
+    const conn = await mongoose.connect(process.env.MONGO_URI, {
+      dbName
+    })
     console.log(`MongoDB connected successfully: ${conn.connection.host}/${conn.connection.name}`)
   } catch (error) {
     console.error("MongoDB connection failed:", error.message)

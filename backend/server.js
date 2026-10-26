@@ -1,6 +1,7 @@
 const express = require("express")
 const cors = require("cors")
 const dotenv = require("dotenv")
+const mongoose = require("mongoose")
 
 const connectDB = require("./config/db")
 const authRoutes = require("./routes/authRoutes")
@@ -20,7 +21,9 @@ const app = express()
 // CORS configuration
 const allowedOrigins = [
   "http://localhost:5173",
-  "http://127.0.0.1:5173"
+  "http://127.0.0.1:5173",
+  "https://assethub-gamma.vercel.app",
+  ...(process.env.FRONTEND_URL ? [process.env.FRONTEND_URL.replace(/\/$/, "")] : [])
 ]
 
 app.use(
@@ -42,9 +45,14 @@ app.use(express.json())
 
 // Health check endpoint
 app.get("/", (req, res) => {
+  const isDbConnected = mongoose.connection.readyState === 1
   res.json({
     status: "online",
-    message: "AssetHub Backend is running!"
+    message: "AssetHub Backend is running!",
+    database: {
+      status: isDbConnected ? "connected" : "disconnected",
+      name: mongoose.connection.name || null
+    }
   })
 })
 

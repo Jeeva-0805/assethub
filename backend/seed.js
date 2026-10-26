@@ -19,7 +19,7 @@ const seedData = async () => {
 
     const mongoUri = process.env.MONGO_URI || "mongodb://127.0.0.1:27017/assethub"
     console.log(`Connecting to MongoDB at: ${mongoUri}`)
-    await mongoose.connect(mongoUri)
+    await mongoose.connect(mongoUri, { dbName: process.env.DB_NAME || "assethub" })
     console.log("Connected successfully. Seeding database...")
 
     // Clear existing data to avoid duplicates
