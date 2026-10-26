@@ -1131,6 +1131,70 @@ body {
   color: #b91c1c;
 }
 
+.login-alert.success {
+  background-color: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  color: #15803d;
+}
+
+.login-alert.info {
+  background-color: #eff6ff;
+  border: 1px solid #bfdbfe;
+  color: #1d4ed8;
+}
+
+.setup-banner {
+  align-items: flex-start;
+}
+
+.setup-banner-content {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  text-align: left;
+}
+
+.setup-banner-content strong {
+  font-size: 13.5px;
+  color: #1e40af;
+}
+
+.setup-banner-content p {
+  margin: 0;
+  font-size: 13px;
+  color: #3b82f6;
+}
+
+.setup-link-btn {
+  display: inline-block;
+  margin-top: 5px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #1d4ed8;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.setup-link-btn:hover {
+  color: #1e3a8a;
+}
+
+.setup-footer-link {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 14px;
+}
+
+.setup-footer-link a {
+  color: #2563eb;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.setup-footer-link a:hover {
+  text-decoration: underline;
+}
+
 .login-form {
   display: flex;
   flex-direction: column;

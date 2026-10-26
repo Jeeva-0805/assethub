@@ -31,12 +31,17 @@ const userSchema = new mongoose.Schema(
         message: "Role must be either Admin or Lab Manager"
       },
       default: "Admin"
+    },
+    isInitialAdmin: {
+      type: Boolean
     }
   },
   {
     timestamps: true
   }
 )
+
+userSchema.index({ isInitialAdmin: 1 }, { unique: true, sparse: true })
 
 userSchema.pre("save", async function () {
   if (!this.isModified("password")) {

@@ -12,6 +12,7 @@ import Usage from './pages/Usage'
 import Reports from './pages/Reports'
 import Settings from './pages/Settings'
 import Login from './pages/Login'
+import AdminSetup from './pages/AdminSetup'
 
 // Layout wrapper for authenticated pages
 function AppLayout({ children }) {
@@ -38,6 +39,7 @@ function App() {
         <Routes>
           {/* Public Authentication Route */}
           <Route path="/login" element={<PublicLoginRoute />} />
+          <Route path="/setup" element={<AdminSetup />} />
 
           {/* Protected Application Routes */}
           <Route

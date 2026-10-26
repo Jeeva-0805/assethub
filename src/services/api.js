@@ -46,6 +46,12 @@ async function request(endpoint, options = {}) {
 }
 
 // Authentication
+export const getSetupStatus = () =>
+  request("/auth/setup-status", { method: "GET" })
+
+export const setupInitialAdmin = (adminData) =>
+  request("/auth/setup", { method: "POST", body: adminData })
+
 export const login = (credentials) =>
   request("/auth/login", { method: "POST", body: credentials })
 

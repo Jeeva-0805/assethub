@@ -1,11 +1,13 @@
-import { useState } from 'react'
-import { useNavigate, useLocation } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { useNavigate, useLocation, Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import { getSetupStatus } from '../services/api'
 
 function Login() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
+  const [setupRequired, setSetupRequired] = useState(false)
   const [submitting, setSubmitting] = useState(false)
 
   const { loginUser } = useAuth()
@@ -13,6 +15,29 @@ function Login() {
   const location = useLocation()
 
   const from = location.state?.from?.pathname || '/'
+  const setupSuccess = location.state?.setupSuccess
+  const infoMessage = location.state?.info
+
+  useEffect(() => {
+    let isMounted = true
+
+    async function checkSetup() {
+      try {
+        const data = await getSetupStatus()
+        if (isMounted && data.setupRequired) {
+          setSetupRequired(true)
+        }
+      } catch (e) {
+        // Silently catch network or bootstrap issues on login page
+      }
+    }
+
+    checkSetup()
+
+    return () => {
+      isMounted = false
+    }
+  }, [])
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -56,6 +81,33 @@ function Login() {
             Smart Inventory and Asset Management System
           </p>
         </div>
+
+        {setupSuccess && (
+          <div className="login-alert success">
+            <span className="alert-icon">✓</span>
+            <span>{setupSuccess}</span>
+          </div>
+        )}
+
+        {infoMessage && (
+          <div className="login-alert info">
+            <span className="alert-icon">ℹ️</span>
+            <span>{infoMessage}</span>
+          </div>
+        )}
+
+        {setupRequired && (
+          <div className="login-alert info setup-banner">
+            <span className="alert-icon">⚙️</span>
+            <div className="setup-banner-content">
+              <strong>First-Time Setup Required</strong>
+              <p>No administrator account exists yet.</p>
+              <Link to="/setup" className="setup-link-btn">
+                Configure Initial Administrator &rarr;
+              </Link>
+            </div>
+          </div>
+        )}
 
         {error && (
           <div className="login-alert error">
